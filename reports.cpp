@@ -76,7 +76,7 @@ void printFeeDefaulters(string currentDate) {
         string semester = defaulters[i][1];
         string dueDate = defaulters[i][4];
         double outstanding = stod(defaulters[i].back()); // Outstanding amount added in M6
-        int weeksLate = daysBetween(dueDate, currentDate) / 7; [cite: 72]
+        int weeksLate = daysBetween(dueDate, currentDate) / 7;
         
         if (weeksLate < 0) weeksLate = 0;
 

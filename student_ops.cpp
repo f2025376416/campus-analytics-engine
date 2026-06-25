@@ -6,7 +6,7 @@ using namespace std;
 // BSAI-YY-XXX format validate karta hai
 bool validateRollFormat(string roll) {
     // Length check: BSAI-24-001 = 10 characters
-    if (roll.length() != 10) return false;
+    if (roll.length() != 11) return false;
 
     // "BSAI-" check
     if (roll.substr(0, 5) != "BSAI-") return false;
