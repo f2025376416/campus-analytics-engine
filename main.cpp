@@ -51,48 +51,56 @@ void studentMenu() {
         cout << "\n--- LEVEL 3: STUDENT OPERATIONS ---\n";
         cout << "1. Add Student\n2. Search by Roll\n3. Soft Delete\n0. Back\nChoice: ";
         cin >> choice;
+
+        // Priority 1 Bug Fix: Handles string/char input crash
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(10000, '\n');
+            cout << "Invalid input! Please enter a valid number.\n";
+            continue;
+        }
+
         if (choice == 0) break;
 
         string roll, name, dept, cgpa;
         switch (choice) {
-            case 1: // validations applied 
-            cout << "Roll (BSAI-YY-XXX): "; cin >> roll;
-    
-            if (!validateRollFormat(roll)) {
-            cout << "Invalid roll format! Use BSAI-YY-XXX\n";
-            break;
-            }
-    
-            vector<string> existing = searchByRoll(roll);
-            if (!existing.empty()) {
-            cout << "Student already exists!\n";
-            break;
-            }
+            case 1: { // <-- Notice this opening bracket! It isolates the scope.
+                cout << "Roll (BSAI-YY-XXX): "; cin >> roll;
+                
+                if (!validateRollFormat(roll)) {
+                    cout << "Invalid roll format! Use BSAI-YY-XXX\n";
+                    break;
+                }
+                
+                vector<string> existing = searchByRoll(roll);
+                if (!existing.empty()) {
+                    cout << "Student already exists!\n";
+                    break;
+                }
 
-            cout << "Name (Alphabets only, 1 word): "; cin >> name;
-            if (!isValidName(name)) {
-                cout << "Invalid Name! Digits and special characters are not allowed.\n";
+                cout << "Name (Alphabets only, 1 word): "; cin >> name;
+                if (!isValidName(name)) {
+                    cout << "Invalid Name! Digits and special characters are not allowed.\n";
+                    break;
+                }
+
+                cout << "Dept (Alphabets only): "; cin >> dept;
+                if (!isValidDept(dept)) {
+                    cout << "Invalid Dept! Only alphabets allowed.\n";
+                    break;
+                }
+
+                cout << "CGPA (0.0 to 4.0): "; cin >> cgpa;
+                if (!isValidCGPA(cgpa)) {
+                    cout << "Invalid CGPA! Must be a valid number between 0.0 and 4.0.\n";
+                    break;
+                }
+
+                addStudent(roll, name, dept, cgpa);
                 break;
-            }
-
-            cout << "Dept (Alphabets only): "; cin >> dept;
-            if (!isValidDept(dept)) {
-                cout << "Invalid Dept! Only alphabets allowed.\n";
-                break;
-            }
-
-            cout << "CGPA (0.0 to 4.0): "; cin >> cgpa;
-            if (!isValidCGPA(cgpa)) {
-                cout << "Invalid CGPA! Must be a valid number between 0.0 and 4.0.\n";
-                break;
-            }
-
-            addStudent(roll, name, dept, cgpa);
-            break;
-
+            } // <-- Notice this closing bracket!
             case 2:
-                cout << "Roll: "; 
-                cin >> roll;
+                cout << "Roll: "; cin >> roll;
                 searchByRoll(roll);
                 break;
             case 3:
