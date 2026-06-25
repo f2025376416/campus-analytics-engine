@@ -115,10 +115,18 @@ void updateStudent(string roll, int fieldIndex, string newValue) {
 }
 
 void softDelete(string roll) {
-    // Status ko inactive kar do, row delete mat karo
+    // First, check if the student actually exists
+    if (!rowExists("students.txt", 0, roll)) {
+        cout << "Cannot delete. Student not found!" << endl;
+        return; // Stop the function right here
+    }
+    
+    // If they exist, update their status
     updateStudent(roll, 4, "inactive");
-    cout << "Student deactivated!" << endl;
-}
+    
+    // Note: We removed the "Student deactivated" cout because 
+    // updateStudent already prints "Student updated successfully!" 
+} // it doesn't directly delete, just deactivates their account
 
 vector<vector<string>> listActiveStudents() {
     vector<vector<string>> data = readTXT("students.txt");
