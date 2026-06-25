@@ -62,9 +62,18 @@ vector<string> searchByRoll(string roll) {
     vector<string> student = findRow("students.txt", 0, roll);
     if (student.empty()) {
         cout << "Student not found!" << endl;
+    } else {
+        // We added this else block to actually print the data
+        cout << "\n--- Student Details ---" << endl;
+        cout << "Roll:   " << student[0] << endl;
+        cout << "Name:   " << student[1] << endl;
+        cout << "Dept:   " << student[2] << endl;
+        cout << "CGPA:   " << student[3] << endl;
+        cout << "Status: " << student[4] << endl;
+        cout << "-----------------------" << endl;
     }
     return student;
-}
+} // added functionality so that if student exists, his info stays
 
 vector<vector<string>> searchByName(string name) {
     vector<vector<string>> data = readTXT("students.txt");

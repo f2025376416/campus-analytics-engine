@@ -22,14 +22,19 @@ void studentMenu() {
         string roll, name, dept, cgpa;
         switch (choice) {
             case 1:
-                cout << "Roll (BSAI-YY-XXX): "; cin >> roll;
-                cout << "Name (One word): "; cin >> name;
-                cout << "Dept: "; cin >> dept;
-                cout << "CGPA: "; cin >> cgpa;
+                cout << "Roll (BSAI-YY-XXX): "; 
+                cin >> roll;
+                cout << "Name (One word): "; 
+                cin >> name;
+                cout << "Dept: "; 
+                cin >> dept;
+                cout << "CGPA: "; 
+                cin >> cgpa;
                 addStudent(roll, name, dept, cgpa);
                 break;
             case 2:
-                cout << "Roll: "; cin >> roll;
+                cout << "Roll: "; 
+                cin >> roll;
                 searchByRoll(roll);
                 break;
             case 3:

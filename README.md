@@ -17,3 +17,4 @@ This project strictly follows the constraints of using foundational C++ construc
 Open your terminal in the project directory and run:
 ```bash
 g++ *.cpp -o main
+./main
