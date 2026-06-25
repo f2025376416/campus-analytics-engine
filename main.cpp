@@ -11,6 +11,40 @@
 
 using namespace std;
 
+// For validations
+// Check if name only has alphabets
+bool isValidName(string name) {
+    for (int i = 0; i < name.length(); i++) {
+        if (!isalpha(name[i])) return false;
+    }
+    return true;
+}
+
+// Check if dept only has alphabets (no digits/special chars)
+bool isValidDept(string dept) {
+    for (int i = 0; i < dept.length(); i++) {
+        if (!isalpha(dept[i])) return false;
+    }
+    return true;
+}
+
+// Check if CGPA is purely numeric and between 0.0 and 4.0
+bool isValidCGPA(string cgpa) {
+    int dotCount = 0;
+    for (int i = 0; i < cgpa.length(); i++) {
+        if (cgpa[i] == '.') {
+            dotCount++;
+            if (dotCount > 1) return false; // Multiple decimals not allowed
+        } else if (!isdigit(cgpa[i])) {
+            return false; // Any alphabet or special char
+        }
+    }
+    if (cgpa.empty() || cgpa == ".") return false;
+    
+    float val = stof(cgpa);
+    return (val >= 0.0 && val <= 4.0);
+}
+
 void studentMenu() {
     int choice;
     while (true) {
@@ -21,17 +55,41 @@ void studentMenu() {
 
         string roll, name, dept, cgpa;
         switch (choice) {
-            case 1:
-                cout << "Roll (BSAI-YY-XXX): "; 
-                cin >> roll;
-                cout << "Name (One word): "; 
-                cin >> name;
-                cout << "Dept: "; 
-                cin >> dept;
-                cout << "CGPA: "; 
-                cin >> cgpa;
-                addStudent(roll, name, dept, cgpa);
+            case 1: // validations applied 
+            cout << "Roll (BSAI-YY-XXX): "; cin >> roll;
+    
+            if (!validateRollFormat(roll)) {
+            cout << "Invalid roll format! Use BSAI-YY-XXX\n";
+            break;
+            }
+    
+            vector<string> existing = searchByRoll(roll);
+            if (!existing.empty()) {
+            cout << "Student already exists!\n";
+            break;
+            }
+
+            cout << "Name (Alphabets only, 1 word): "; cin >> name;
+            if (!isValidName(name)) {
+                cout << "Invalid Name! Digits and special characters are not allowed.\n";
                 break;
+            }
+
+            cout << "Dept (Alphabets only): "; cin >> dept;
+            if (!isValidDept(dept)) {
+                cout << "Invalid Dept! Only alphabets allowed.\n";
+                break;
+            }
+
+            cout << "CGPA (0.0 to 4.0): "; cin >> cgpa;
+            if (!isValidCGPA(cgpa)) {
+                cout << "Invalid CGPA! Must be a valid number between 0.0 and 4.0.\n";
+                break;
+            }
+
+            addStudent(roll, name, dept, cgpa);
+            break;
+
             case 2:
                 cout << "Roll: "; 
                 cin >> roll;
