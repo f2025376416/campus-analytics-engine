@@ -13,17 +13,18 @@ using namespace std;
 
 // For validations
 // Check if name only has alphabets
+// Check if name only has alphabets and spaces
 bool isValidName(string name) {
     for (int i = 0; i < name.length(); i++) {
-        if (!isalpha(name[i])) return false;
+        if (!isalpha(name[i]) && name[i] != ' ') return false;
     }
     return true;
 }
 
-// Check if dept only has alphabets (no digits/special chars)
+// Check if dept only has alphabets and spaces
 bool isValidDept(string dept) {
     for (int i = 0; i < dept.length(); i++) {
-        if (!isalpha(dept[i])) return false;
+        if (!isalpha(dept[i]) && dept[i] != ' ') return false;
     }
     return true;
 }
@@ -49,10 +50,10 @@ void studentMenu() {
     int choice;
     while (true) {
         cout << "\n--- LEVEL 3: STUDENT OPERATIONS ---\n";
-        cout << "1. Add Student\n2. Search by Roll\n3. Soft Delete\n0. Back\nChoice: ";
+        // 1. Rename Option 3 Here
+        cout << "1. Add Student\n2. Search by Roll\n3. Toggle Active/Inactive\n0. Back\nChoice: ";
         cin >> choice;
 
-        // Priority 1 Bug Fix: Handles string/char input crash
         if (cin.fail()) {
             cin.clear();
             cin.ignore(10000, '\n');
@@ -64,27 +65,38 @@ void studentMenu() {
 
         string roll, name, dept, cgpa;
         switch (choice) {
-            case 1: { // <-- Notice this opening bracket! It isolates the scope.
+            case 1: { 
                 cout << "Roll (BSAI-YY-XXX): "; cin >> roll;
                 
                 if (!validateRollFormat(roll)) {
-                    cout << "Invalid roll format! Use BSAI-YY-XXX\n";
+                    cout << "Invalid roll format! Use strictly BSAI-YY-XXX\n";
                     break;
                 }
                 
-                vector<string> existing = searchByRoll(roll);
+                // 2. Smart Duplicate Check (Silent check with status validation)
+                vector<string> existing = findRow("students.txt", 0, roll);
                 if (!existing.empty()) {
-                    cout << "Student already exists!\n";
+                    if (existing[4] == "inactive") {
+                        cout << "[Alert] This ID exists in the database but is INACTIVE!\n";
+                        cout << "Please use Option 3 (Toggle Active/Inactive) to reactivate it.\n";
+                    } else {
+                        cout << "Student already exists and is currently ACTIVE!\n";
+                    }
                     break;
                 }
 
-                cout << "Name (Alphabets only, 1 word): "; cin >> name;
+                cout << "Name (Alphabets & Spaces only): "; 
+                cin >> ws; 
+                getline(cin, name); 
+                
                 if (!isValidName(name)) {
-                    cout << "Invalid Name! Digits and special characters are not allowed.\n";
+                    cout << "Invalid Name! Digits and special chars not allowed.\n";
                     break;
                 }
 
-                cout << "Dept (Alphabets only): "; cin >> dept;
+                cout << "Dept (Alphabets & Spaces only): "; 
+                getline(cin, dept); 
+                
                 if (!isValidDept(dept)) {
                     cout << "Invalid Dept! Only alphabets allowed.\n";
                     break;
@@ -98,19 +110,19 @@ void studentMenu() {
 
                 addStudent(roll, name, dept, cgpa);
                 break;
-            } // <-- Notice this closing bracket!
+            }
             case 2:
                 cout << "Roll: "; cin >> roll;
                 searchByRoll(roll);
                 break;
-            case 3:
-                cout << "Roll to delete: "; cin >> roll;
-                softDelete(roll);
+            case 3: // Updated option context
+                cout << "Roll to toggle status: "; cin >> roll;
+                softDelete(roll); // Function name is same, but logic is toggle
                 break;
             default: cout << "Invalid choice!\n";
         }
     }
-}
+} // added toggle functionality
 
 void courseMenu() {
     int choice;

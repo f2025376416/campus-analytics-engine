@@ -62,16 +62,24 @@ vector<string> searchByRoll(string roll) {
     vector<string> student = findRow("students.txt", 0, roll);
     if (student.empty()) {
         cout << "Student not found!" << endl;
-    } else {
-        // We added this else block to actually print the data
-        cout << "\n--- Student Details ---" << endl;
-        cout << "Roll:   " << student[0] << endl;
-        cout << "Name:   " << student[1] << endl;
-        cout << "Dept:   " << student[2] << endl;
-        cout << "CGPA:   " << student[3] << endl;
-        cout << "Status: " << student[4] << endl;
-        cout << "-----------------------" << endl;
+        return student;
     }
+
+    // Agar student inactive hai toh details hide karo aur alert do
+    if (student[4] == "inactive") {
+        cout << "\n[System Alert]: This student record exists but is currently INACTIVE (Soft-Deleted).\n";
+        cout << "Go to option 3 to Reactivate this student if needed.\n";
+        return student; 
+    }
+
+    // Agar active hai toh normal print karo
+    cout << "\n--- Student Details ---" << endl;
+    cout << "Roll:   " << student[0] << endl;
+    cout << "Name:   " << student[1] << endl;
+    cout << "Dept:   " << student[2] << endl;
+    cout << "CGPA:   " << student[3] << endl;
+    cout << "Status: " << student[4] << endl;
+    cout << "-----------------------" << endl;
     return student;
 } // added functionality so that if student exists, his info stays
 
@@ -115,18 +123,22 @@ void updateStudent(string roll, int fieldIndex, string newValue) {
 }
 
 void softDelete(string roll) {
-    // First, check if the student actually exists
-    if (!rowExists("students.txt", 0, roll)) {
-        cout << "Cannot delete. Student not found!" << endl;
-        return; // Stop the function right here
+    // Check karo student file mein hai bhi ya nahi
+    vector<string> student = findRow("students.txt", 0, roll);
+    if (student.empty()) {
+        cout << "Student not found!" << endl;
+        return;
     }
-    
-    // If they exist, update their status
-    updateStudent(roll, 4, "inactive");
-    
-    // Note: We removed the "Student deactivated" cout because 
-    // updateStudent already prints "Student updated successfully!" 
-} // it doesn't directly delete, just deactivates their account
+
+    // Smart Toggle Logic
+    if (student[4] == "active") {
+        updateStudent(roll, 4, "inactive");
+        cout << "Student account has been DEACTIVATED (Soft-Deleted)!\n";
+    } else {
+        updateStudent(roll, 4, "active");
+        cout << "Student account has been REACTIVATED successfully!\n";
+    }
+} // toggling
 
 vector<vector<string>> listActiveStudents() {
     vector<vector<string>> data = readTXT("students.txt");
