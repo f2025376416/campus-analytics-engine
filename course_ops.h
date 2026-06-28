@@ -20,5 +20,6 @@ void dropCourse(string roll, string courseCode, string semester);
 int getCreditLoad(string roll, string semester);
 bool checkPrerequisite(string roll, string courseCode);
 vector<vector<string>> listEnrolledStudents(string courseCode);
+void printStudentCourses(string roll);
 
 #endif

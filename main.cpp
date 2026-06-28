@@ -128,23 +128,18 @@ void courseMenu() {
     int choice;
     while (true) {
         cout << "\n--- LEVEL 3: COURSE OPERATIONS ---\n";
-        cout << "1. Enroll Student\n2. Drop Course\n0. Back\nChoice: ";
+        cout << "1. Enroll Student\n2. Drop Course\n3. View Student Courses\n0. Back\nChoice: ";
         cin >> choice;
+
         if (choice == 0) break;
 
-        string roll, course, sem;
+        string roll, code, sem;
         switch (choice) {
-            case 1:
-                cout << "Roll: "; cin >> roll;
-                cout << "Course Code: "; cin >> course;
-                cout << "Semester: "; cin >> sem;
-                enrollStudent(roll, course, sem);
-                break;
-            case 2:
-                cout << "Roll: "; cin >> roll;
-                cout << "Course Code: "; cin >> course;
-                cout << "Semester: "; cin >> sem;
-                dropCourse(roll, course, sem);
+            case 1: // ... (tera purana enroll code)
+            case 2: // ... (tera purana drop code)
+            case 3:
+                cout << "Enter Roll Number to view courses: "; cin >> roll;
+                printStudentCourses(roll);
                 break;
             default: cout << "Invalid choice!\n";
         }

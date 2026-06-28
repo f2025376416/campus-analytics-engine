@@ -65,21 +65,24 @@ vector<string> searchByRoll(string roll) {
         return student;
     }
 
-    // Agar student inactive hai toh details hide karo aur alert do
-    if (student[4] == "inactive") {
-        cout << "\n[System Alert]: This student record exists but is currently INACTIVE (Soft-Deleted).\n";
-        cout << "Go to option 3 to Reactivate this student if needed.\n";
-        return student; 
-    }
-
-    // Agar active hai toh normal print karo
+    // Student Details
     cout << "\n--- Student Details ---" << endl;
-    cout << "Roll:   " << student[0] << endl;
-    cout << "Name:   " << student[1] << endl;
-    cout << "Dept:   " << student[2] << endl;
-    cout << "CGPA:   " << student[3] << endl;
-    cout << "Status: " << student[4] << endl;
+    cout << "Roll:   " << student[0] << "\nName:   " << student[1] << "\nStatus: " << student[4] << endl;
+
+    // Check Active Courses (enrollments.txt ka data read kar)
+    vector<vector<string>> enrollments = readTXT("enrollments.txt");
+    cout << "\nActive Courses:" << endl;
+    bool found = false;
+    for (int i = 0; i < enrollments.size(); i++) {
+        // enrollments[i][1] = roll, [2] = course, [5] = status
+        if (enrollments[i][1] == roll && enrollments[i][5] == "active") {
+            cout << "- " << enrollments[i][2] << " (Sem: " << enrollments[i][3] << ")" << endl;
+            found = true;
+        }
+    }
+    if (!found) cout << "No active courses found." << endl;
     cout << "-----------------------" << endl;
+    
     return student;
 } // added functionality so that if student exists, his info stays
 
