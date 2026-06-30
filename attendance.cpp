@@ -1,6 +1,6 @@
 #include "attendance.h"
 #include "filehandler.h"
-#include "course_ops.h"
+#include "course_ops.h" // c
 #include <iostream>
 #include <iomanip>
 
@@ -16,7 +16,7 @@ void markAttendance(string courseCode, string date, string semester) {
         return;
     }
     for (int i = 0; i < enrolled.size(); i++) {
-        string roll = enrolled[i][0];
+        string roll = enrolled[i][1]; // enrollments.txt: roll_no is index 1, not 0
         string status = "";
         while (status != "P" && status != "A" && status != "L") {
             cout << "Student " << roll << " - Enter P/A/L: ";
@@ -50,7 +50,7 @@ vector<vector<string>> getShortageList(string courseCode) {
     vector<vector<string>> enrolled = listEnrolledStudents(courseCode);
     vector<vector<string>> shortage;
     for (int i = 0; i < enrolled.size(); i++) {
-        string roll = enrolled[i][0];
+        string roll = enrolled[i][1]; // enrollments.txt: roll_no is index 1, not 0
         double pct = getAttendancePct(roll, courseCode);
         if (pct < 75.0) {
             vector<string> row = {roll, courseCode, to_string(pct)};

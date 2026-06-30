@@ -2,11 +2,10 @@
 #include "filehandler.h"
 #include <iostream>
 #include <iomanip>
-#include <cmath>
+#include <cmath> // c
 
 using namespace std;
 
-// DD-MM-YYYY format validate karta hai 
 bool validateDate(string date) {
     if (date.length() != 10) return false;
     if (date[2] != '-' || date[5] != '-') return false;
@@ -18,7 +17,6 @@ bool validateDate(string date) {
     return true;
 }
 
-// Helper for daysBetween - manual month lengths 
 int monthDays[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 int countTotalDays(int d, int m, int y) {
@@ -26,7 +24,6 @@ int countTotalDays(int d, int m, int y) {
     for (int i = 0; i < m - 1; i++) {
         n += monthDays[i];
     }
-    // Leap year logic
     int leaps = y / 4 - y / 100 + y / 400;
     if (m <= 2 && (y % 4 == 0 && (y % 100 != 0 || y % 400 == 0))) {
         leaps--;
@@ -35,7 +32,6 @@ int countTotalDays(int d, int m, int y) {
     return n;
 }
 
-// Parses DD-MM-YYYY aur difference nikalta hai bina ctime ke 
 int daysBetween(string date1, string date2) {
     int d1 = stoi(date1.substr(0, 2)), m1 = stoi(date1.substr(3, 2)), y1 = stoi(date1.substr(6, 4));
     int d2 = stoi(date2.substr(0, 2)), m2 = stoi(date2.substr(3, 2)), y2 = stoi(date2.substr(6, 4));
@@ -46,7 +42,6 @@ int daysBetween(string date1, string date2) {
     return total2 - total1; 
 }
 
-// 2% per complete week fine 
 double computeLateFine(string dueDate, string paidDate, double amountDue) {
     if (paidDate == "NONE" || paidDate.empty()) return 0.0;
     
@@ -63,14 +58,16 @@ void recordPayment(string roll, string semester, string date, double amount) {
         return;
     }
 
+    // fees.txt layout: fee_id(0), roll_no(1), semester(2), total_fee(3),
+    // amount_paid(4), due_date(5), payment_date(6), payment_method(7), status(8)
     vector<vector<string>> fees = readTXT("fees.txt");
     bool found = false;
 
     for (int i = 0; i < fees.size(); i++) {
-        if (fees[i][0] == roll && fees[i][1] == semester) {
-            double paidSoFar = stod(fees[i][3]);
-            fees[i][3] = to_string(paidSoFar + amount);
-            fees[i][5] = date; // Update paid_date 
+        if (fees[i][1] == roll && fees[i][2] == semester) {
+            double paidSoFar = stod(fees[i][4]);
+            fees[i][4] = to_string(paidSoFar + amount);
+            fees[i][6] = date;
             found = true;
             break;
         }
@@ -81,7 +78,7 @@ void recordPayment(string roll, string semester, string date, double amount) {
         return;
     }
 
-    vector<string> header = {"roll", "semester", "amount_due", "amount_paid", "due_date", "paid_date"};
+    vector<string> header = {"fee_id", "roll_no", "semester", "total_fee", "amount_paid", "due_date", "payment_date", "payment_method", "status"};
     writeTXT("fees.txt", header, fees);
     cout << "Payment recorded successfully!" << endl;
 }
@@ -90,17 +87,16 @@ void generateReceipt(string roll, string semester) {
     vector<vector<string>> fees = readTXT("fees.txt");
     
     for (int i = 0; i < fees.size(); i++) {
-        if (fees[i][0] == roll && fees[i][1] == semester) {
-            double due = stod(fees[i][2]);
-            double paid = stod(fees[i][3]);
-            string dueDate = fees[i][4];
-            string paidDate = fees[i][5];
+        if (fees[i][1] == roll && fees[i][2] == semester) {
+            double due = stod(fees[i][3]);
+            double paid = stod(fees[i][4]);
+            string dueDate = fees[i][5];
+            string paidDate = fees[i][6];
 
             double fine = computeLateFine(dueDate, paidDate, due);
             double totalDue = due + fine;
             double balance = totalDue - paid;
 
-            // Formatted receipt using iomanip 
             cout << "\n======================================" << endl;
             cout << setfill(' ') << setw(25) << "FEE RECEIPT" << endl;
             cout << setfill('-') << setw(38) << "-" << setfill(' ') << endl;
@@ -125,20 +121,17 @@ vector<vector<string>> getDefaulters(string currentDate) {
     vector<vector<string>> defaulters;
 
     for (int i = 0; i < fees.size(); i++) {
-        double due = stod(fees[i][2]);
-        double paid = stod(fees[i][3]);
-        string dueDate = fees[i][4];
+        double due = stod(fees[i][3]);
+        double paid = stod(fees[i][4]);
+        string dueDate = fees[i][5];
 
-        // Agar balance > 0 aur past due date 
         if ((due - paid) > 0 && daysBetween(dueDate, currentDate) > 0) {
-            // Append an extra column internally for outstanding amount so we can sort easily
             vector<string> record = fees[i];
             record.push_back(to_string(due - paid)); 
             defaulters.push_back(record);
         }
     }
 
-    // Bubble sort by outstanding amount (descending order) 
     int n = defaulters.size();
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {

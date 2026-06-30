@@ -11,9 +11,6 @@
 
 using namespace std;
 
-// For validations
-// Check if name only has alphabets
-// Check if name only has alphabets and spaces
 bool isValidName(string name) {
     for (int i = 0; i < name.length(); i++) {
         if (!isalpha(name[i]) && name[i] != ' ') return false;
@@ -21,7 +18,6 @@ bool isValidName(string name) {
     return true;
 }
 
-// Check if dept only has alphabets and spaces
 bool isValidDept(string dept) {
     for (int i = 0; i < dept.length(); i++) {
         if (!isalpha(dept[i]) && dept[i] != ' ') return false;
@@ -29,15 +25,14 @@ bool isValidDept(string dept) {
     return true;
 }
 
-// Check if CGPA is purely numeric and between 0.0 and 4.0
 bool isValidCGPA(string cgpa) {
     int dotCount = 0;
     for (int i = 0; i < cgpa.length(); i++) {
         if (cgpa[i] == '.') {
             dotCount++;
-            if (dotCount > 1) return false; // Multiple decimals not allowed
+            if (dotCount > 1) return false;
         } else if (!isdigit(cgpa[i])) {
-            return false; // Any alphabet or special char
+            return false;
         }
     }
     if (cgpa.empty() || cgpa == ".") return false;
@@ -50,8 +45,7 @@ void studentMenu() {
     int choice;
     while (true) {
         cout << "\n--- LEVEL 3: STUDENT OPERATIONS ---\n";
-        // 1. Rename Option 3 Here
-        cout << "1. Add Student\n2. Search by Roll\n3. Toggle Active/Inactive\n0. Back\nChoice: ";
+        cout << "1. Add Student\n2. Search by Roll\n3. Toggle Active/Inactive\n4. Search As You Type (Bonus)\n0. Back\nChoice: ";
         cin >> choice;
 
         if (cin.fail()) {
@@ -73,7 +67,6 @@ void studentMenu() {
                     break;
                 }
                 
-                // 2. Smart Duplicate Check (Silent check with status validation)
                 vector<string> existing = findRow("students.txt", 0, roll);
                 if (!existing.empty()) {
                     if (existing[4] == "inactive") {
@@ -115,14 +108,18 @@ void studentMenu() {
                 cout << "Roll: "; cin >> roll;
                 searchByRoll(roll);
                 break;
-            case 3: // Updated option context
+            case 3:
                 cout << "Roll to toggle status: "; cin >> roll;
-                softDelete(roll); // Function name is same, but logic is toggle
+                softDelete(roll);
+                break;
+            case 4:
+                cin.ignore(10000, '\n'); // flush leftover newline before char-by-char read
+                searchAsYouType();
                 break;
             default: cout << "Invalid choice!\n";
         }
     }
-} // added toggle functionality
+}
 
 void courseMenu() {
     int choice;
@@ -135,8 +132,8 @@ void courseMenu() {
 
         string roll, code, sem;
         switch (choice) {
-            case 1: // ... (tera purana enroll code)
-            case 2: // ... (tera purana drop code)
+            case 1:
+            case 2:
             case 3:
                 cout << "Enter Roll Number to view courses: "; cin >> roll;
                 printStudentCourses(roll);
@@ -165,11 +162,10 @@ void opsMenu() {
                 markAttendance(course, date, sem);
                 break;
             case 4:
-                // Simplified for time: directly asks for inputs to demo enterMarks
                 cout << "Roll: "; cin >> roll;
                 cout << "Course: "; cin >> course;
                 cout << "Semester: "; cin >> sem;
-                enterMarks(roll, course, sem, {10, 8, 9}, {10, 10}, 35, 50); // Dummy array inputs for speed
+                enterMarks(roll, course, sem, {10, 8, 9}, {10, 10}, 35, 50);
                 break;
             case 5:
                 cout << "Roll: "; cin >> roll;

@@ -5,7 +5,7 @@
 #include "fee_tracker.h"
 #include "grades.h"
 #include <iostream>
-#include <iomanip>
+#include <iomanip> // c
 #include <fstream>
 
 using namespace std;
@@ -14,7 +14,6 @@ void printMeritList() {
     vector<vector<string>> students = listActiveStudents();
     int n = students.size();
     
-    // Bubble sort by CGPA (Descending) - Index 3 is CGPA [cite: 48, 78]
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
             if (stod(students[j][3]) < stod(students[j+1][3])) {
@@ -46,7 +45,7 @@ void printAttendanceDefaulters() {
     bool foundAny = false;
     for (int i = 0; i < courses.size(); i++) {
         string courseCode = courses[i][0];
-        vector<vector<string>> defaulters = getShortageList(courseCode); // Gets roll, course, pct [cite: 78]
+        vector<vector<string>> defaulters = getShortageList(courseCode);
         
         for (int j = 0; j < defaulters.size(); j++) {
             string roll = defaulters[j][0];
@@ -65,17 +64,17 @@ void printAttendanceDefaulters() {
 }
 
 void printFeeDefaulters(string currentDate) {
-    vector<vector<string>> defaulters = getDefaulters(currentDate); // Calls from M6 [cite: 78]
+    vector<vector<string>> defaulters = getDefaulters(currentDate);
     
     cout << "\n============= FEE DEFAULTERS =============" << endl;
     cout << left << setw(15) << "Roll" << setw(12) << "Semester" << setw(15) << "Overdue ($)" << "Weeks Late" << endl;
     cout << "------------------------------------------" << endl;
 
     for (int i = 0; i < defaulters.size(); i++) {
-        string roll = defaulters[i][0];
-        string semester = defaulters[i][1];
-        string dueDate = defaulters[i][4];
-        double outstanding = stod(defaulters[i].back()); // Outstanding amount added in M6
+        string roll = defaulters[i][1];
+        string semester = defaulters[i][2];
+        string dueDate = defaulters[i][5];
+        double outstanding = stod(defaulters[i].back());
         int weeksLate = daysBetween(dueDate, currentDate) / 7;
         
         if (weeksLate < 0) weeksLate = 0;
@@ -130,13 +129,12 @@ void printSemesterResult(string roll, string semester) {
 void printDepartmentSummary() {
     vector<vector<string>> students = readTXT("students.txt");
     
-    // Parallel arrays for tracking [cite: 78]
     vector<string> depts;
     vector<int> counts;
     vector<double> cgpaSums;
 
     for (int i = 0; i < students.size(); i++) {
-        if (students[i][4] != "active") continue; // only active
+        if (students[i][4] != "active") continue;
         
         string dept = students[i][2];
         double cgpa = stod(students[i][3]);
@@ -170,7 +168,6 @@ void printDepartmentSummary() {
     cout << "================================================\n" << endl;
 }
 
-// cout redirection magic [cite: 78]
 void exportReportToFile(int reportType, string arg1, string arg2) {
     ofstream file("exported_report.txt");
     if (!file.is_open()) {
@@ -178,7 +175,6 @@ void exportReportToFile(int reportType, string arg1, string arg2) {
         return;
     }
 
-    // Save old cout buffer and redirect to file
     streambuf* coutbuf = cout.rdbuf(); 
     cout.rdbuf(file.rdbuf()); 
 
@@ -188,7 +184,6 @@ void exportReportToFile(int reportType, string arg1, string arg2) {
     else if (reportType == 4) printSemesterResult(arg1, arg2);
     else if (reportType == 5) printDepartmentSummary();
 
-    // Restore standard cout
     cout.rdbuf(coutbuf); 
     
     cout << "Report successfully exported to exported_report.txt" << endl;
